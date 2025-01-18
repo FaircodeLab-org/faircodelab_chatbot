@@ -4,7 +4,14 @@ app_publisher = "vinay"
 app_description = "faircodelab_chatbot "
 app_email = "reddysrivinayofficial@gmail.com"
 app_license = "mit"
+# File: ~/frappe-bench/apps/faircodelab_chatbot/faircodelab_chatbot/hooks.py
 
+# Include CSS and JS files in the header of web template
+web_include_css = [
+    "/assets/faircodelab_chatbot/css/chatbot.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css",
+]
+web_include_js = "/assets/faircodelab_chatbot/js/chatbot.js"
 # Apps
 # ------------------
 

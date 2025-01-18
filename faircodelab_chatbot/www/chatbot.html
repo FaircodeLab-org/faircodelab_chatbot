@@ -1,0 +1,55 @@
+{% extends "templates/web.html" %}
+
+{% block content %}
+<div class="chatbot-container">
+    <div id="chat-window" style="border:1px solid #ccc; padding:10px; height:400px; overflow-y:auto;">
+        <!-- Chat messages will appear here -->
+    </div>
+    <div style="margin-top:10px;">
+        <input type="text" id="user-input" placeholder="Type your question..." style="width:80%;" />
+        <button id="send-button">Send</button>
+    </div>
+</div>
+
+<script>
+document.getElementById('send-button').onclick = function() {
+    var userInput = document.getElementById('user-input').value;
+    if (userInput.trim() === '') return;
+
+    var chatWindow = document.getElementById('chat-window');
+
+    // Display user's message
+    var userMessage = document.createElement('div');
+    userMessage.style.textAlign = 'right';
+    userMessage.style.margin = '10px';
+    userMessage.innerHTML = '<strong>You:</strong> ' + userInput;
+    chatWindow.appendChild(userMessage);
+
+    // Clear input
+    document.getElementById('user-input').value = '';
+
+    // Scroll to bottom
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Call backend to get response
+    frappe.call({
+        method: 'faircodelab_chatbot.api.get_bot_response',
+        args: {
+            'user_message': userInput
+        },
+        callback: function(r) {
+            if (r.message) {
+                var botMessage = document.createElement('div');
+                botMessage.style.textAlign = 'left';
+                botMessage.style.margin = '10px';
+                botMessage.innerHTML = '<strong>Bot:</strong> ' + r.message;
+                chatWindow.appendChild(botMessage);
+
+                // Scroll to bottom
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        }
+    });
+}
+</script>
+{% endblock %}
