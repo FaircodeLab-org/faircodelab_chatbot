@@ -23,7 +23,7 @@ def process_message(user_message):
 
 def search_faq(user_message):
     # Perform a basic search for FAQs (exact match or contains)
-    faqs = frappe.get_all('FAQ', fields=['question', 'answer'])
+    faqs = frappe.get_all('FAQS', fields=['question', 'answer'])
     for faq in faqs:
         if user_message in faq['question'].lower(): # Basic matching
             return faq['answer']
@@ -31,7 +31,7 @@ def search_faq(user_message):
 
 def get_all_faqs():
     # Fetch all FAQs from the database
-    faqs = frappe.get_all('FAQ', fields=['question', 'answer'])
+    faqs = frappe.get_all('FAQS', fields=['question', 'answer'])
     return [{"question": faq["question"], "answer": faq["answer"]} for faq in faqs]
 
 def get_gpt_interpreted_faq(user_message, faqs):
