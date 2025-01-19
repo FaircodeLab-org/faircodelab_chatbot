@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="online-indicator"></div>
           </div>
           <div class="assistant-info">
-            <h3>Planton Organic Assistant</h3>
+            <h3>Yamba </h3>
             <p>Online | Typically replies instantly</p>
           </div>
         </div>
