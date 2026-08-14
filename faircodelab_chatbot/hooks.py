@@ -8,10 +8,10 @@ app_license = "mit"
 
 # Include CSS and JS files in the header of web template
 web_include_css = [
-    "/assets/faircodelab_chatbot/css/chatbot.css",
+    "/assets/faircodelab_chatbot/css/chatbot.css?v=20260814.1",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css",
 ]
-web_include_js = "/assets/faircodelab_chatbot/js/chatbot.js"
+web_include_js = "/assets/faircodelab_chatbot/js/chatbot.js?v=20260814.1"
 # Apps
 # ------------------
 
@@ -248,4 +248,3 @@ web_include_js = "/assets/faircodelab_chatbot/js/chatbot.js"
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-

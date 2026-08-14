@@ -1,0 +1,17 @@
+include MANIFEST.in
+include requirements.txt
+include *.md
+include *.py
+include *.txt
+recursive-include faircodelab_chatbot *.css
+recursive-include faircodelab_chatbot *.csv
+recursive-include faircodelab_chatbot *.html
+recursive-include faircodelab_chatbot *.ico
+recursive-include faircodelab_chatbot *.js
+recursive-include faircodelab_chatbot *.json
+recursive-include faircodelab_chatbot *.md
+recursive-include faircodelab_chatbot *.png
+recursive-include faircodelab_chatbot *.py
+recursive-include faircodelab_chatbot *.svg
+recursive-include faircodelab_chatbot *.txt
+recursive-exclude faircodelab_chatbot *.pyc

@@ -158,6 +158,27 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+.bot-message p {
+  margin: 0 0 8px;
+}
+
+.bot-message p:last-child {
+  margin-bottom: 0;
+}
+
+.bot-message ul {
+  margin: 6px 0 8px 18px;
+  padding: 0;
+}
+
+.bot-message li {
+  margin: 4px 0;
+}
+
+.bot-message strong {
+  font-weight: 600;
+}
+
 .timestamp {
   font-size: 10px;
   color: #999;

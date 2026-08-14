@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var isMinimized = false;
   var isRecording = false;
   var isTyping = false;
+  var chatHistory = [];
 
   // Toggle chatbot visibility
   chatbotToggle.onclick = function () {
@@ -124,13 +125,14 @@ document.addEventListener('DOMContentLoaded', function () {
   function sendMessage() {
     var userInput = userInputField.value.trim();
     if (userInput === '') return;
+    var requestHistory = chatHistory.slice(-8);
 
     var currentTime = new Date();
 
     // Display user's message
     var userMessage = document.createElement('div');
     userMessage.className = 'user-message message';
-    userMessage.innerHTML = '<strong>You:</strong> ' + userInput;
+    userMessage.textContent = 'You: ' + userInput;
     chatWindow.appendChild(userMessage);
     appendTimestamp(userMessage);
 
@@ -142,12 +144,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Show typing indicator
     showTypingIndicator();
+    addChatHistory('user', userInput);
 
     // Call backend to get response
     frappe.call({
       method: 'faircodelab_chatbot.api.get_bot_response',
       args: {
-        'user_message': userInput
+        'user_message': userInput,
+        'chat_history': JSON.stringify(requestHistory)
       },
       callback: function (r) {
         // Remove typing indicator
@@ -156,9 +160,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (r.message) {
           var botMessage = document.createElement('div');
           botMessage.className = 'bot-message message';
-          botMessage.innerHTML = '<strong>Assistant:</strong> ' + r.message;
+          botMessage.innerHTML = formatBotResponse('**Assistant:** ' + r.message);
           chatWindow.appendChild(botMessage);
           appendTimestamp(botMessage);
+          addChatHistory('assistant', r.message);
 
           // Scroll to bottom
           chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -170,13 +175,92 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var botMessage = document.createElement('div');
         botMessage.className = 'bot-message message';
-        botMessage.innerHTML = '<strong>Assistant:</strong> Sorry, an error occurred.';
+        botMessage.textContent = 'Assistant: Sorry, an error occurred.';
         chatWindow.appendChild(botMessage);
         appendTimestamp(botMessage);
 
         chatWindow.scrollTop = chatWindow.scrollHeight;
       }
     });
+  }
+
+  function addChatHistory(role, content) {
+    var text = stripHtml(content).trim();
+    if (!text) return;
+
+    chatHistory.push({
+      role: role,
+      content: text.slice(0, 600)
+    });
+
+    if (chatHistory.length > 10) {
+      chatHistory = chatHistory.slice(-10);
+    }
+  }
+
+  function stripHtml(content) {
+    var element = document.createElement('div');
+    element.innerHTML = content || '';
+    return element.textContent || element.innerText || '';
+  }
+
+  function formatBotResponse(content) {
+    var lines = normalizeBotMarkdown(content).split('\n');
+    var html = '';
+    var inList = false;
+
+    lines.forEach(function (line) {
+      var trimmed = line.trim();
+
+      if (!trimmed) {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+        return;
+      }
+
+      var bulletMatch = trimmed.match(/^[-*]\s+(.+)/);
+      if (bulletMatch) {
+        if (!inList) {
+          html += '<ul>';
+          inList = true;
+        }
+        html += '<li>' + formatInlineMarkdown(bulletMatch[1]) + '</li>';
+        return;
+      }
+
+      if (inList) {
+        html += '</ul>';
+        inList = false;
+      }
+      html += '<p>' + formatInlineMarkdown(trimmed) + '</p>';
+    });
+
+    if (inList) {
+      html += '</ul>';
+    }
+
+    return html || escapeHtml(content);
+  }
+
+  function normalizeBotMarkdown(content) {
+    return String(content || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/([:.;])\s+([-*])\s+(?=\*\*)/g, '$1\n$2 ');
+  }
+
+  function formatInlineMarkdown(content) {
+    return escapeHtml(content).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  }
+
+  function escapeHtml(content) {
+    return String(content || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   function formatTime(date) {
